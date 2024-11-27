@@ -9,10 +9,8 @@ class app {
     app() throws IOException {
         if (f.createNewFile()) {
             FileWriter fw = new FileWriter(f, true);
-            BufferedWriter bw = new BufferedWriter(fw); // used to append new data to the file in CSV format
-
-            bw.write("Date,Category,Amount\n"); // add a header to the file
-            bw.close();
+            fw.write("Date,Category,Amount\n"); // add a header to the file
+            fw.close();
         }
     }
 
@@ -27,27 +25,32 @@ class app {
         double amount = s.nextDouble();
 
         FileWriter fw = new FileWriter(f, true);
-        BufferedWriter bw = new BufferedWriter(fw);
-
-        bw.write(date + "," + category + "," + amount + "\n"); // writing into the file
-        bw.close();
+        fw.write(date + "," + category + "," + amount + "\n"); // writing into the file
+        fw.close();
 
         System.out.println("Expense Added Successfully!");
     }
 
     void view_expense() throws IOException {
         FileReader fr = new FileReader(f);
-        BufferedReader br = new BufferedReader(fr);
+        StringBuilder sb = new StringBuilder();
+        int i;
 
-        String line = br.readLine(); // Skip the header for printing only expenses
+        // Reading the file character by character
+        while ((i = fr.read()) != -1) {
+            sb.append((char) i);
+        }
+        fr.close();
+
+        String[] lines = sb.toString().split("\n");
         boolean found = false;
 
         System.out.println("\n----------------------------");
         System.out.println("Your Expenses:");
         System.out.println("----------------------------");
 
-        while ((line = br.readLine()) != null) {
-            String[] detail = line.split(",");
+        for (int j = 1; j < lines.length; j++) { // Start from 1 to skip the header
+            String[] detail = lines[j].split(",");
             System.out.println("Date: " + detail[0] + " | Category: " + detail[1] + " | Amount: ₹" + detail[2]);
             found = true;
         }
@@ -57,7 +60,6 @@ class app {
         }
 
         System.out.println("----------------------------");
-        br.close();
     }
 
     public static void main(String args[]) throws IOException {
